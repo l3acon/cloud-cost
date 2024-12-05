@@ -1,0 +1,13 @@
+---
+- name: Start a VM
+  hosts: localhost
+  tasks:
+    - name: Start an ec2 instance
+      amazon.aws.ec2_instance:
+        filters:
+          "tag:Name": "{{ item }}"
+        region: "{{ aws_region }}"
+        state: "started"
+      loop: "{{ vm_names }}"
+      
+
