@@ -6,6 +6,7 @@
       amazon.aws.ec2_instance:
         name: "{{ item }}"
         region: "{{ aws_region }}"
+        state: "stopped"
       loop: "{{ vm_names }}"
       
 
