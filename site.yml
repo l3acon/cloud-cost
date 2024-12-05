@@ -44,6 +44,7 @@
       ansible.builtin.set_stats:
         data:
           vm_names: "{{ inventory_hostname }}"
+        per_host: true
       when:
         - per_cpu_load_average |float < load_per_cpu_mimimum | float
         - pct_mem_used | float < mem_used_minimum | float
