@@ -51,5 +51,5 @@
 
     - name: Export machine name that can be shutdown
       ansible.builtin.debug:
-        msg: "{{ inventory_hostname }}"
+        msg: "{{ vm_names }}"
  
