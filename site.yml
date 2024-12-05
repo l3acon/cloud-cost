@@ -1,0 +1,50 @@
+---
+- name: Determine under-utilized machines
+  hosts: "{{ _hosts | default('localhost') }}"
+  gather_facts: true
+  vars: 
+    # If the per-cpu load is above this mimimum
+    # assume instance is in use.
+    # The per-cpu load is essentially, "How many of 
+    # of the available CPUs are being used?" A
+    # threshold of '1' means all CPUs are being 
+    # utilized. A thresold of '0.1' means 10% of CPUs 
+    # are being used, a thresold of '10' means the 
+    # load is 10x the number of CPUs available.
+    load_per_cpu_mimimum: 0.1
+
+    # If the mem-used is above this minimum assume 
+    # instance is in use. This is a simple 
+    # percentage in floating piont: A value of '1' 
+    # is 100% of memory is in use, '0.1' is 10% etc.
+    mem_used_minimum: 0.1
+
+  tasks:
+    - name: Set facts for CPU and memory metrics
+      ansible.builtin.set_fact:
+        per_cpu_load_average: "{{ hostvars[inventory_hostname].ansible_loadavg['15m']|float / hostvars[inventory_hostname].ansible_processor_vcpus|float }}"
+        pct_mem_used: "{{ hostvars[inventory_hostname].ansible_memory_mb.real.used |float / hostvars[inventory_hostname].ansible_memory_mb.real.total|float }}"
+
+    - name: Debug per_cpu_load_average
+      ansible.builtin.debug: 
+        msg: "per_cpu_load_average: {{ per_cpu_load_average }} load_per_cpu_mimimum: {{ load_per_cpu_mimimum }}"
+
+    - name: Debug pct_mem_used
+      ansible.builtin.debug: 
+        msg: "pct_mem_used: {{ pct_mem_used }}"
+
+    - name: Say if a machine can be shutdown
+      ansible.builtin.debug: 
+        msg: "per_cpu_load_average BELOW load_per_cpu_mimimum, AND pct_mem_used BELOW mem_used_minimum\nMachine can be powered down!"
+      when:  
+        - per_cpu_load_average |float < load_per_cpu_mimimum | float
+        - pct_mem_used | float < mem_used_minimum | float
+
+    - name: Export machine name that can be shutdown
+      ansible.builtin.set_stats:
+        data:
+          vm_names: 
+      when:  
+        - per_cpu_load_average |float < load_per_cpu_mimimum | float
+        - pct_mem_used | float < mem_used_minimum | float
+
