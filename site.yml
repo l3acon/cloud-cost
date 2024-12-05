@@ -42,9 +42,14 @@
 
     - name: Export machine name that can be shutdown
       ansible.builtin.set_stats:
+        aggregate: true
         data:
           vm_names: "{{ inventory_hostname }}"
       when:
         - per_cpu_load_average |float < load_per_cpu_mimimum | float
         - pct_mem_used | float < mem_used_minimum | float
 
+    - name: Export machine name that can be shutdown
+      ansible.builtin.debug:
+        msg: "{{ inventory_hostname }}"
+ 
