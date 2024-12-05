@@ -5,6 +5,7 @@
     - name: start an instance and Add EBS volume from a snapshot
       amazon.aws.ec2_instance:
         name: "{{ item }}"
+        region: "{{ aws_region }}"
       loop: "{{ vm_names }}"
       
 
