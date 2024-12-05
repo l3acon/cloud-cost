@@ -11,13 +11,13 @@
     # utilized. A thresold of '0.1' means 10% of CPUs 
     # are being used, a thresold of '10' means the 
     # load is 10x the number of CPUs available.
-    load_per_cpu_mimimum: 0.1
+    load_per_cpu_mimimum: "{{ cloud_cost_load_per_cpu_min | default('0.1') }}"
 
     # If the mem-used is above this minimum assume 
     # instance is in use. This is a simple 
     # percentage in floating piont: A value of '1' 
     # is 100% of memory is in use, '0.1' is 10% etc.
-    mem_used_minimum: 0.9
+    mem_used_minimum: "{{ cloud_cost_mem_used_min | default('0.1') }}"
 
   tasks:
     - name: Set facts for CPU and memory metrics
