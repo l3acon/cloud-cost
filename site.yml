@@ -45,7 +45,7 @@
       aggregate: true
       per_host: false
         data:
-          vm_names: "{{ vm_names }}"
+          vm_names: "{{ [inventory_hostname] }}"
       when:  
         - per_cpu_load_average |float < load_per_cpu_mimimum | float
         - pct_mem_used | float < mem_used_minimum | float
