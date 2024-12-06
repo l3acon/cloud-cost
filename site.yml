@@ -17,7 +17,7 @@
     # instance is in use. This is a simple 
     # percentage in floating piont: A value of '1' 
     # is 100% of memory is in use, '0.1' is 10% etc.
-    mem_used_minimum: "{{ cloud_cost_mem_used_min | default('0.8') }}"
+    mem_used_minimum: "{{ cloud_cost_mem_used_min | default('0.1') }}"
 
   tasks:
     - name: Set facts for CPU and memory metrics
