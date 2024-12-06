@@ -41,9 +41,9 @@
         - pct_mem_used | float < mem_used_minimum | float
 
     - name: Set stats
-      aggregate: true
-      per_host: false
       ansible.builtin.set_stats:
+        aggregate: true
+        per_host: false
         data:
           vm_names: "{{ [inventory_hostname] }}"
       when:  
