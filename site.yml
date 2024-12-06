@@ -35,12 +35,13 @@
 
     - name: Say if a machine can be shutdown
       ansible.builtin.debug: 
-        msg: "per_cpu_load_average BELOW load_per_cpu_mimimum, AND pct_mem_used BELOW mem_used_minimum\nMachine can be powered down!"
+        msg: "per_cpu_load_average BELOW load_per_cpu_mimimum, AND pct_mem_used BELOW mem_used_minimum
+        Machine can be powered down!"
       when:  
         - per_cpu_load_average |float < load_per_cpu_mimimum | float
         - pct_mem_used | float < mem_used_minimum | float
 
-    - name: Set stats
+    - name: Export under-utilized machines using set_stats
       ansible.builtin.set_stats:
         aggregate: true
         per_host: false
