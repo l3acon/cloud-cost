@@ -17,7 +17,7 @@
     # instance is in use. This is a simple 
     # percentage in floating piont: A value of '1' 
     # is 100% of memory is in use, '0.1' is 10% etc.
-    mem_used_minimum: "{{ cloud_cost_mem_used_min | default('0.1') }}"
+    mem_used_minimum: "{{ cloud_cost_mem_used_min | default('0.8') }}"
 
   tasks:
     - name: Set facts for CPU and memory metrics
@@ -41,9 +41,17 @@
         - pct_mem_used | float < mem_used_minimum | float
 
     - name: Export machine name that can be shutdown
-      ansible.builtin.set_stats:
-        data:
-          vm_names: "{{ inventory_hostname }}"
+      delegate_to: localhost
+      block:
+        - name: Build list of machines that can be shutdown
+          ansible.builtin.set_fact:
+            vm_names: "{{ vm_names | default([]) + [inventory_hostname] }}"
+
+        - name: Set stats
+          run_once: true
+          ansible.builtin.set_stats:
+            data:
+              vm_names: "{{ vm_names }}"
       when:
         - per_cpu_load_average |float < load_per_cpu_mimimum | float
         - pct_mem_used | float < mem_used_minimum | float
